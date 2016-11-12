@@ -24,79 +24,53 @@ id productName price quantity
 19847983Куртка для сноубордистов, разм10173.991234
 */
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Solution {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
+        try {
+            if (args[0] == null) return;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return;
+        }
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Введите полное имя файла: ");
         String fileName = br.readLine();
         br.close();
+        Path originFile = Paths.get(fileName);
+        Path tempFile = Paths.get(originFile.getParent().toString(), "tempFile.txt");
 
-        RandomAccessFile file = new RandomAccessFile(fileName, "rw");
-        int separatorLength = System.getProperty("line.separator").length();
-
+        if (Files.exists(tempFile)) Files.delete(tempFile);
+        Files.createFile(tempFile);
+        BufferedReader reader = new BufferedReader(new FileReader(originFile.toFile()));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile.toFile()));
 
         switch (args[0]) {
-            case "-u" :
-                file.seek(0);
-                while (file.getFilePointer() < file.length()) {
-                    String line = file.readLine();
+            case "-u":
+                while (reader.ready()) {
+                    String line = reader.readLine();
                     if (line.substring(0, 8).trim().equals(args[1])) {
-                        if (file.getFilePointer() == file.length())
-                            file.seek(file.getFilePointer() - line.length());
-                        else file.seek(file.getFilePointer() - line.length() - separatorLength);
-                        
-                        StringBuilder lineToWrite = new StringBuilder();
-                        lineToWrite.append(setTheSize(args[1], 8)).
-                                append(setTheSize(args[2], 30)).
-                                append(setTheSize(args[3], 8)).
-                                append(setTheSize(args[4], 4));
-                        file.writeBytes(lineToWrite.toString());
-                        if (file.getFilePointer() != file.length())
-                            file.writeBytes(System.getProperty("line.separator"));
+                        writer.write(String.format("%-8s%-30s%-8s%-4s", args[1], args[2], args[3], args[4]));
+                        writer.newLine();
+                    } else {
+                        writer.write(line);
+                        writer.newLine();
                     }
                 }
+                reader.close();
+                writer.close();
+                Files.move(tempFile, originFile, REPLACE_EXISTING);
+//                Files.delete(tempFile);
                 break;
-            case "-d" :
-                file.seek(0);
-                while (file.getFilePointer() < file.length()) {
-                    long startPointer = file.getFilePointer();
-                    String line = file.readLine();
-                    long tempPointer = file.getFilePointer();
-                    if (args[1].equals(line.substring(0, 8).trim())) {
-                        while (startPointer < file.length()) {
-                            if (((file.length() - line.length()) == startPointer)
-                                    || ((file.length() - line.length() - separatorLength) == startPointer))
-                                file.setLength(startPointer - separatorLength);
-                            else {
-                                file.seek(startPointer + line.length() + separatorLength);
-                                String tempLine = file.readLine();
-                                file.seek(startPointer);
-                                if (tempLine != null)
-                                    file.writeBytes(tempLine);
-                                startPointer += (line.length() + separatorLength);
-                            }
-                        }
-                        file.seek(tempPointer);
-                    }
-                }
+            case "-d":
+                System.out.println("-d");
                 break;
-
         }
-        file.close();
-    }
-
-    public static String setTheSize(String line, int size) {
-        if (size < 0) return "";
-        if (line.length() == size) return line;
-        if (line.length() > size) return line.substring(0, size);
-
-        StringBuilder builder = new StringBuilder(line);
-        for (int i = line.length(); i < size; i++) {
-            builder.append(" ");
-        }
-        return builder.toString();
     }
 }
