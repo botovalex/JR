@@ -25,6 +25,7 @@ id productName price quantity
 */
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,14 +50,18 @@ public class Solution {
         if (Files.exists(tempFile)) Files.delete(tempFile);
         Files.createFile(tempFile);
         BufferedReader reader = new BufferedReader(new FileReader(originFile.toFile()));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile.toFile()));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile.toFile()), Charset.forName("UTF-8")));
 
         switch (args[0]) {
             case "-u":
                 while (reader.ready()) {
                     String line = reader.readLine();
                     if (line.substring(0, 8).trim().equals(args[1])) {
-                        writer.write(String.format("%-8s%-30s%-8s%-4s", args[1], args[2], args[3], args[4]));
+                        String id = args[1];
+                        String productName = args[2].codePointCount(0, args[2].length()) > 30 ? args[2].substring(0, args[2].offsetByCodePoints(0, 30)) : args[2];
+                        String price = args[3].codePointCount(0, args[3].length()) > 8 ? args[3].substring(0, args[3].offsetByCodePoints(0, 8)) : args[3];
+                        String quantity = args[4].codePointCount(0, args[4].length()) > 4 ? args[4].substring(0, args[4].offsetByCodePoints(0, 4)) : args[4];
+                        writer.write(String.format("%-8s%-30s%-8s%-4s", id, productName, price, quantity));
                         writer.newLine();
                     } else {
                         writer.write(line);
@@ -66,10 +71,18 @@ public class Solution {
                 reader.close();
                 writer.close();
                 Files.move(tempFile, originFile, REPLACE_EXISTING);
-//                Files.delete(tempFile);
                 break;
             case "-d":
-                System.out.println("-d");
+                while (reader.ready()) {
+                    String line = reader.readLine();
+                    if (!line.substring(0, 8).trim().equals(args[1])) {
+                        writer.write(line);
+                        writer.newLine();
+                    }
+                }
+                reader.close();
+                writer.close();
+                Files.move(tempFile, originFile, REPLACE_EXISTING);
                 break;
         }
     }
