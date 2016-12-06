@@ -64,11 +64,11 @@ public class AmigoSet<E> extends AbstractSet<E> implements Cloneable, Serializab
     }
 
     private void writeObject(ObjectOutputStream s) throws IOException {
-//        int capacity = HashMapReflectionHelper.callHiddenMethod(map, "capacity");
-//        float loadFactor = HashMapReflectionHelper.callHiddenMethod(map, "loadFactor");
+        int capacity = HashMapReflectionHelper.callHiddenMethod(map, "capacity");
+        float loadFactor = HashMapReflectionHelper.callHiddenMethod(map, "loadFactor");
 
-//        s.writeInt(capacity);
-//        s.writeFloat(loadFactor);
+        s.writeInt(capacity);
+        s.writeFloat(loadFactor);
         s.writeInt(map.size());
         for (E e : map.keySet()) {
             s.writeObject(e);
