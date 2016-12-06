@@ -25,5 +25,3 @@ public interface Columnable {
      */
     int ordinal();
 }
-
-

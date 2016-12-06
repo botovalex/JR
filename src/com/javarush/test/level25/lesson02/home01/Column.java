@@ -1,8 +1,9 @@
 package com.javarush.test.level25.lesson02.home01;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
-public enum Column implements Columnable{
+public enum Column {
     Customer("Customer"),
     BankName("Bank Name"),
     AccountNumber("Account Number"),
@@ -15,8 +16,6 @@ public enum Column implements Columnable{
     private Column(String columnName) {
         this.columnName = columnName;
     }
-
-
 
     /**
      * Задает новый порядок отображения колонок, который хранится в массиве realOrder.
@@ -50,42 +49,8 @@ public enum Column implements Columnable{
      * @return список колонок
      */
     public static List<Column> getVisibleColumns() {
-        checkRealOrder();
-        Map columnMap = new TreeMap<Integer, Column>();
-        Column[] colums = values();
-        for (int i = 0; i < realOrder.length; i++) {
-            if (realOrder[i] >= 0) columnMap.put(realOrder[i], colums[i]);
-        }
-        return new ArrayList<Column>(columnMap.values());
-    }
+        List<Column> result = new LinkedList<>();
 
-    @Override
-    public String getColumnName() {
-        return this.columnName;
-    }
-
-    @Override
-    public boolean isShown() {
-        return realOrder[ordinal()] >= 0;
-    }
-
-    @Override
-    public void hide() {
-        checkRealOrder();
-        int temp = realOrder[this.ordinal()];
-        realOrder[this.ordinal()] = -1;
-        for (int i = 0; i < realOrder.length; i++) {
-            if (realOrder[i] != -1 && realOrder[i] > temp)
-                realOrder[i]--;
-        }
-    }
-
-    private static void checkRealOrder() {
-        if (realOrder == null) {
-            realOrder = new int[values().length];
-            for (Column column : values())
-                realOrder[column.ordinal()] = column.ordinal();
-        }
+        return result;
     }
 }
-

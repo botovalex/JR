@@ -18,8 +18,9 @@ public class Solution {
      * Bank Name
      */
     public static void main(String[] args) {
-        //Column.configureColumns(Column.Amount, Column.AccountNumber, Column.BankName);
-        Column.configureColumns(Column.BankName, Column.AccountNumber, Column.Customer);
+
+        Column.configureColumns(Column.Amount, Column.AccountNumber, Column.BankName);
+
         for (Columnable columnable : Column.getVisibleColumns()) {
             System.out.println(columnable.getColumnName());
         }
@@ -32,16 +33,3 @@ public class Solution {
         }
     }
 }
-
-/*
-    Customer("Customer"),
-    BankName("Bank Name"),
-    AccountNumber("Account Number"),
-    Amount("Available Amount");
- */
-
-
-/*
-        for (int i : realOrder) System.out.print(i + " ");
-        System.out.println();
- */
