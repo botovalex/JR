@@ -20,6 +20,16 @@ public class Solution {
     public static void main(String[] args) {
 
         Column.configureColumns(Column.Amount, Column.AccountNumber, Column.BankName);
+//        Column.configureColumns(Column.Amount, Column.AccountNumber, Column.BankName, Column.Customer);
+
+
+
+//        System.out.print("realOrder 1st = ");
+//        for (int i : Column.realOrder) {
+//            System.out.print(i + " ");
+//        }
+//        System.out.println();
+
 
         for (Columnable columnable : Column.getVisibleColumns()) {
             System.out.println(columnable.getColumnName());
@@ -27,6 +37,15 @@ public class Solution {
 
         System.out.println("--------------------");
         Column.AccountNumber.hide();
+
+
+
+//        System.out.print("realOrder 2st = ");
+//        for (int i : Column.realOrder) {
+//            System.out.print(i + " ");
+//        }
+//        System.out.println();
+
 
         for (Columnable columnable : Column.getVisibleColumns()) {
             System.out.println(columnable.getColumnName());

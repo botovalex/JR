@@ -1,9 +1,11 @@
 package com.javarush.test.level25.lesson02.home01;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public enum Column {
+public enum Column implements Columnable {
     Customer("Customer"),
     BankName("Bank Name"),
     AccountNumber("Account Number"),
@@ -51,6 +53,72 @@ public enum Column {
     public static List<Column> getVisibleColumns() {
         List<Column> result = new LinkedList<>();
 
+        for (int i = 0; i < values().length; i++) {
+            if (values()[i].isShown()) result.add(values()[i]);
+        }
+        Collections.sort(result, new Comparator<Column>() {
+            @Override
+            public int compare(Column o1, Column o2) {
+                return realOrder[o1.ordinal()] - realOrder[o2.ordinal()];
+            }
+        });
+
         return result;
     }
+
+    @Override
+    public String getColumnName() {
+        return columnName;
+    }
+
+    @Override
+    public boolean isShown() {
+        return realOrder[ordinal()] != -1;
+    }
+
+    @Override
+    public void hide() {
+        realOrder[ordinal()] = -1;
+    }
 }
+
+
+
+/*
+        int index = 0;
+        for (int i = 0; i < values().length; i++) {
+            for (int j = 0; j < realOrder.length; j++) {
+                if (realOrder[j] == index) {
+                    result.add(values()[j]);
+                    break;
+                }
+            }
+            index++;
+        }
+ */
+
+/*
+        for (int i = 0; i < values().length; i++) {
+            if (values()[i].isShown()) result.add(null);
+        }
+
+        for (int i = 0; i < realOrder.length; i++) {
+            if (realOrder[i] != -1) {
+                result.set(realOrder[i], values()[i]);
+            }
+        }
+ */
+
+/*
+        int ord = this.ordinal();
+        if (realOrder[ord] == -1) {
+            throw new IllegalArgumentException("Column '" + this.columnName + "' is already hidden.");
+        }
+        int current = realOrder[ord];
+        realOrder[ord] = -1;
+        for (int i = 0; i < realOrder.length; i++) {
+            if (realOrder[i] > current) {
+                realOrder[i]--;
+            }
+        }
+ */
